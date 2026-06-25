@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Agent Workshop 03 · WalktheChat</title>
+<meta name="description" content="Video used to need a studio. Now you write it like code. An internal WalktheChat workshop on editing video with AI agents.">
+<meta property="og:title" content="AI Agent Workshop 03 · WalktheChat">
+<meta property="og:description" content="Build like you have an edit suite. Footage, captions and motion, written as code and rendered by an agent.">
+<style>deck-stage:not(:defined){visibility:hidden}</style>
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ===== Workshop 03 local components (shared style.css stays untouched) ===== */
+.ctitle .w, .kine .w{display:inline-block}
+
+/* cover playhead (a scrubber sweep, on theme for a video talk) */
+.cover .playhead{position:absolute; left:var(--pad-x); right:var(--pad-x); bottom:168px;
+  height:2px; background:linear-gradient(90deg,var(--gold),rgba(184,137,59,.15)); transform-origin:left center; transform:scaleX(1)}
+.cover .phdot{position:absolute; left:var(--pad-x); bottom:163px; width:12px; height:12px; border-radius:50%;
+  background:var(--gold); box-shadow:0 0 18px var(--gold); margin-left:-2px}
+
+/* proof slide: real phone video + live kinetic demo */
+.proofgrid{display:grid; grid-template-columns:auto 1fr; gap:60px; flex:1; min-height:0; margin-top:30px}
+.pcol{min-height:0; display:flex; align-items:stretch; justify-content:center}
+.phone{position:relative; height:100%; aspect-ratio:9/16; border-radius:34px; background:#0b0f1a;
+  padding:13px; box-shadow:0 30px 72px rgba(12,17,31,.5); border:1px solid rgba(255,255,255,.10)}
+.phone .vid{width:100%; height:100%; object-fit:cover; border-radius:22px; display:block; background:#000}
+.phone .notch{position:absolute; top:24px; left:50%; transform:translateX(-50%); width:116px; height:9px;
+  border-radius:6px; background:rgba(255,255,255,.20); z-index:2}
+
+.rcol{display:flex; flex-direction:column; min-height:0; gap:20px}
+.kpanel{position:relative; flex:1; min-height:0; border-radius:16px; overflow:hidden;
+  background:radial-gradient(120% 120% at 70% 18%,#17223b 0%,#0b0f1a 60%); border:1px solid rgba(255,255,255,.09);
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:12px; padding:34px 30px 28px}
+.kpanel .scrim{position:absolute; inset:0; background:linear-gradient(180deg,rgba(11,15,26,0) 38%,rgba(11,15,26,.72) 100%)}
+.kpanel .kicker2{position:absolute; top:18px; left:22px; z-index:2; font-size:15px; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--gold); font-weight:600}
+.kine{position:relative; z-index:2; text-align:center; font-family:var(--sans); font-weight:700;
+  font-size:40px; line-height:1.16; color:#fff; text-shadow:0 2px 20px rgba(0,0,0,.6); max-width:92%}
+.kine .key{color:var(--gold)}
+.kpanel .klabel{position:relative; z-index:2; text-align:center; font-size:18px; color:rgba(255,255,255,.62); letter-spacing:.02em; max-width:90%}
+.kpanel .slam{position:absolute; z-index:3; top:36%; left:50%; transform:translate(-50%,-50%);
+  font-family:var(--serif); font-weight:700; font-size:128px; letter-spacing:.02em; color:var(--gold);
+  text-shadow:0 8px 34px rgba(0,0,0,.55); opacity:0; pointer-events:none}
+.kpanel .replay{position:absolute; bottom:15px; right:16px; z-index:4; font-size:13px; letter-spacing:.12em;
+  text-transform:uppercase; color:rgba(255,255,255,.72); border:1px solid rgba(255,255,255,.22);
+  border-radius:999px; padding:7px 14px; cursor:pointer; background:rgba(0,0,0,.28); font-family:var(--sans)}
+.kpanel .replay:hover{color:#fff; border-color:var(--gold)}
+/* "moves in plain words": logic, not code (the team directs, it does not read code) */
+.movelist{background:var(--cream); border:1px solid var(--line); border-radius:14px; padding:20px 26px}
+.movelist .mhead{font-size:18px; letter-spacing:.16em; text-transform:uppercase; color:var(--stone); font-weight:600; margin-bottom:14px}
+.movelist ul{list-style:none; display:flex; flex-direction:column; gap:11px}
+.movelist li{display:flex; align-items:baseline; gap:14px; font-size:24px; line-height:1.3; color:#3a382f}
+.movelist .trig{flex:0 0 auto; min-width:168px; font-weight:600; color:var(--navy)}
+.movelist .ar{color:var(--gold); flex:0 0 auto}
+.movelist li span:last-child{flex:1}
+.movelist .mnote{margin-top:15px; padding-top:13px; border-top:1px solid var(--line); font-size:21px; font-style:italic; color:var(--stone)}
+.movelist .mnote b{color:var(--navy); font-style:normal}
+/* two-branch: the layering diagram (Palmier Pro, branch one) */
+.tracks{display:flex; flex-direction:column; gap:10px}
+.trk{border-radius:10px; padding:15px 20px; font-size:21px; font-weight:600; color:var(--navy); border:1px solid var(--line); background:var(--cream)}
+.trk.cap{background:rgba(184,137,59,.14); border-color:rgba(184,137,59,.4); color:#7a5a23}
+.trk.broll{background:rgba(30,42,60,.08)}
+.trk.talk{background:var(--navy); color:#fff; border-color:var(--navy)}
+.trk.music{background:rgba(30,42,60,.05); color:var(--stone); font-weight:500}
+/* the seven moves grid */
+.mgrid{display:grid; grid-template-columns:1fr 1fr; gap:15px 50px; margin-top:30px; flex:1; min-height:0; align-content:start}
+.mv{display:flex; gap:18px; align-items:baseline; border-bottom:1px solid var(--line); padding-bottom:13px}
+.mv .mvn{font-family:var(--serif); font-style:italic; font-size:34px; color:var(--gold); flex:0 0 auto; min-width:38px; line-height:1}
+.mv .mvt{font-size:25px; font-weight:600; color:var(--navy); line-height:1.1}
+.mv .mvs{font-size:21px; color:#5d594c; margin-top:4px; line-height:1.3}
+/* acupoints "ships twice" card */
+.cardframe{height:100%; aspect-ratio:9/16; border-radius:18px; overflow:hidden; box-shadow:0 24px 60px rgba(27,26,23,.22); border:1px solid var(--line); background:#ddd6c8}
+.cardframe img{width:100%; height:100%; object-fit:cover; display:block}
+.shipsgrid{display:flex; align-items:stretch; justify-content:center; gap:30px; flex:1; min-height:0; margin-top:22px}
+.shipcol{display:flex; flex-direction:column; min-height:0; align-items:center; gap:13px}
+.shipcol .phone, .shipcol .cardpair{flex:1; min-height:0}
+.shiplabel{font-size:19px; letter-spacing:.14em; text-transform:uppercase; color:var(--stone); font-weight:600; flex:0 0 auto}
+.shipplus{align-self:center; font-family:var(--serif); font-size:64px; color:var(--gold); flex:0 0 auto; padding-bottom:24px}
+.cardpair{display:flex; gap:18px}
+/* closing slide motion (the deck "renders" itself) */
+.clo .w{display:inline-block}
+.closebar{position:absolute; left:50%; transform:translateX(-50%); bottom:188px; width:520px; height:4px; border-radius:3px; background:rgba(251,248,241,.16); overflow:hidden}
+.closebar .cbfill{display:block; height:100%; width:100%; background:linear-gradient(90deg,var(--gold),#e3c489); transform:scaleX(0); transform-origin:left center}
+</style>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <!-- ===== S01 · COVER ===== -->
+<section class="cover" data-anim="cover" data-label="Cover">
+  <div class="cc">
+    <div class="ctop"><span class="clogo">WalktheChat</span><span class="ctag">Internal Workshop · 03</span></div>
+    <div>
+      <h1 class="ctitle"><span class="w">Build</span> <span class="w">like</span> <span class="w">you</span><br><span class="w">have</span> <span class="w">an</span> <span class="w">edit</span> <span class="w">suite.</span></h1>
+      <div class="csub">An AI agent workshop, part three. The one medium you still outsourced, video, you can now write like code.</div>
+    </div>
+    <div class="ctop">
+      <span class="cmeta">Footage &middot; Captions &middot; Motion &middot; Rendered by code</span>
+      <span class="cmeta">2026</span>
+    </div>
+  </div>
+  <div class="playhead"></div><div class="phdot"></div>
+</section>
+
+  <!-- ===== S02 · PROOF (real video + live motion) ===== -->
+<section data-anim="proof" data-label="Proof">
+  <div class="hd"><span class="kicker">AI Agent Workshop &middot; 03</span><span class="hd-brand">WalktheChat</span></div>
+  <div class="body-area" style="padding-top:26px">
+    <div class="sub plain" style="font-weight:600">Proof, not theory</div>
+    <h2 class="title sm anim" style="margin-top:12px; max-width:1660px">Nobody dragged a clip to make this. You describe the moves in plain words and the agent builds the whole video.</h2>
+    <div class="proofgrid">
+      <div class="pcol anim d1">
+        <div class="phone">
+          <span class="notch"></span>
+          <video class="vid" src="assets/3am.mp4" poster="assets/3am-cover.png" controls playsinline preload="metadata"></video>
+        </div>
+      </div>
+      <div class="rcol">
+        <div class="kpanel anim d2">
+          <div class="scrim"></div>
+          <span class="kicker2">Two moves, live</span>
+          <div class="kine"><span class="w key">kinetic</span> <span class="w">captions</span></div>
+          <div class="slam">SLAM</div>
+          <div class="klabel">you ask for them in plain words; the agent animates them</div>
+          <button class="replay" type="button">&#8635; Replay</button>
+        </div>
+        <div class="movelist anim d3">
+          <div class="mhead">The moves behind it, in plain words</div>
+          <ul>
+            <li><span class="trig">Her voice</span><span class="ar">&rarr;</span><span>captions pop in, word by word</span></li>
+            <li><span class="trig">The key word</span><span class="ar">&rarr;</span><span>gilded gold</span></li>
+            <li><span class="trig">A vivid noun</span><span class="ar">&rarr;</span><span>cut to b-roll of it</span></li>
+            <li><span class="trig">The turn</span><span class="ar">&rarr;</span><span>the big word slams, with a boom</span></li>
+          </ul>
+          <div class="mnote">You make these calls in <b>plain words</b>. The agent writes the code.</div>
+        </div>
+        <div class="band anim d3" style="padding:20px 28px; font-size:27px">
+          <span class="lede">Jenny's verdict, off the timeline editor</span>"Doing so much better than Palmier."
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ft"><span class="foot">01-3am-EN.mp4 &middot; 1080&times;1920 &middot; every move above was a call made in words; the agent wrote and rendered the video.</span><span class="pageno">1</span></div>
+</section>
+
+  <!-- ===== S03 · THE SHIFT + THE FORK ===== -->
+<section data-label="The shift">
+  <div class="hd"><span class="kicker">AI Agent Workshop &middot; 03</span><span class="hd-brand">WalktheChat</span></div>
+  <div class="body-area" style="padding-top:30px">
+    <div class="sub plain" style="font-weight:600">The shift</div>
+    <h2 class="title sm anim" style="margin-top:12px; max-width:1660px">Video stopped being a timeline you drag. Now there are two ways in, and you pick by the job.</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:80px; flex:1; min-height:0; margin-top:44px">
+      <div class="well anim d1" style="justify-content:flex-start">
+        <div class="num-tab">01</div>
+        <div class="h" style="font-size:33px; margin-top:10px">Edit it yourself, with AI</div>
+        <div style="height:1px; background:var(--line); margin:20px 0"></div>
+        <p class="lead" style="font-size:26px; color:#46443a">You stay in the editor. AI fetches the b-roll, the music and the captions; you arrange them by feel. This is Palmier Pro.</p>
+        <div style="flex:1"></div>
+        <div class="note" style="font-size:22px; font-style:italic">Best for a single clip, when you want to see and place every cut yourself.</div>
+      </div>
+      <div class="anim d2" style="display:flex; flex-direction:column; border-left:1px solid var(--line); padding-left:80px">
+        <div class="num-tab">02</div>
+        <div style="font-size:33px; font-weight:600; color:var(--navy); margin-top:10px">Direct an agent to build it</div>
+        <div style="height:1px; background:var(--line); margin:20px 0"></div>
+        <p class="lead" style="font-size:26px; color:#46443a">You describe the edit in words. The agent writes and renders the whole video. You never touch the code. This is HyperFrames.</p>
+        <div style="flex:1"></div>
+        <div class="note" style="font-size:22px; font-style:italic; color:var(--gold)">Best for a series, when every clip must match and you want scale.</div>
+      </div>
+    </div>
+    <div class="band anim d3" style="margin-top:10px">Same craft underneath. One you drive <span style="color:var(--gold)">by hand</span>, one you direct <span style="color:var(--gold)">in words</span>.</div>
+  </div>
+  <div class="ft"><span class="foot">Both run in tools you already have in China: Palmier, plus Claude Code, DeepSeek or Qwen for the agent path.</span><span class="pageno">2</span></div>
+</section>
+
+  <!-- ===== S04 · BRANCH ONE · PALMIER PRO ===== -->
+<section data-label="Palmier Pro">
+  <div class="hd"><span class="kicker">AI Agent Workshop &middot; 03</span><span class="hd-brand">WalktheChat</span></div>
+  <div class="body-area" style="padding-top:30px">
+    <div class="sub plain" style="font-weight:600">Branch one &middot; human in the loop</div>
+    <h2 class="title sm anim" style="margin-top:12px; max-width:1660px">In Palmier Pro you stay in the editor and the AI does the fetching and the drafting, so you arrange and pick by feel without trawling stock sites.</h2>
+    <div style="display:grid; grid-template-columns:1.02fr .98fr; gap:64px; flex:1; min-height:0; margin-top:36px">
+      <div class="anim d1" style="display:flex; flex-direction:column; gap:20px; min-height:0">
+        <div>
+          <div class="eyebrow" style="margin-bottom:11px">The AI fetches</div>
+          <ul class="chk" style="gap:11px; font-size:22px">
+            <li><span class="tick">&#10003;</span><div>b-roll on the literal beat, from free commercial libraries</div></li>
+            <li><span class="tick">&#10003;</span><div>a calm music bed, ducked under the voice</div></li>
+            <li><span class="tick">&#10003;</span><div>captions, and a full frame teaching card at the teaching moment</div></li>
+          </ul>
+        </div>
+        <div>
+          <div class="eyebrow" style="margin-bottom:11px">The AI also writes the lines</div>
+          <ul class="chk" style="gap:11px; font-size:22px">
+            <li><span class="tick">&#10003;</span><div>it drafts the words on screen, a few at a time, each with the reason it lands</div></li>
+            <li><span class="tick" style="color:var(--gold)">&#9679;</span><div>you steer the direction and pick the one with the rhythm; it drops onto the timeline</div></li>
+          </ul>
+        </div>
+        <div>
+          <div class="eyebrow" style="margin-bottom:11px">You decide</div>
+          <ul class="chk" style="gap:11px; font-size:22px">
+            <li><span class="tick" style="color:var(--gold)">&#9679;</span><div>which moment gets a cutaway, and when to let her face carry it</div></li>
+            <li><span class="tick" style="color:var(--gold)">&#9679;</span><div>the feel: calm and clinical, never a stock footage ad</div></li>
+          </ul>
+        </div>
+      </div>
+      <div class="anim d2" style="display:flex; flex-direction:column; min-height:0">
+        <div class="eyebrow" style="margin-bottom:14px">Why it stays readable: the layers</div>
+        <div class="tracks">
+          <div class="trk cap">Captions, always on top</div>
+          <div class="trk broll">B-roll cutaway, covers the picture</div>
+          <div class="trk talk">Your talking head, voice plays underneath</div>
+          <div class="trk music">Music bed, ducked low under the voice</div>
+        </div>
+        <div class="note" style="margin-top:18px; font-size:22px">The cutaway hides the picture, never the sound. You see the b-roll and still hear her.</div>
+      </div>
+    </div>
+    <div class="band anim d3" style="margin-top:8px">The ceiling is one music bed and two or three cutaways. <span style="color:var(--gold)">Past that it reads as an ad, not two doctors talking.</span></div>
+  </div>
+  <div class="ft"><span class="foot">Palmier free tier: you import free assets, you do not generate. The restraint is the craft.</span><span class="pageno">3</span></div>
+</section>
+
+  <!-- ===== S05 · BRANCH TWO · THE AGENT PATH ===== -->
+<section data-label="The agent path">
+  <div class="hd"><span class="kicker">AI Agent Workshop &middot; 03</span><span class="hd-brand">WalktheChat</span></div>
+  <div class="body-area" style="padding-top:30px">
+    <div class="sub plain" style="font-weight:600">Branch two &middot; you direct, it builds</div>
+    <h2 class="title sm anim" style="margin-top:12px; max-width:1660px">Describe the edit in plain words and the agent builds the whole video, so the next clip in the series matches this one exactly.</h2>
+    <div class="flow anim d1" style="margin-top:44px">
+      <div class="node" style="padding:32px 24px"><div class="t" style="font-size:27px">Your brief, in words</div><div class="s" style="font-size:20px; margin-top:10px">the mood, the beats, who is speaking</div></div>
+      <div class="arrow" style="font-size:40px">&rarr;</div>
+      <div class="node accent" style="padding:32px 24px"><div class="t" style="font-size:27px">The agent writes it</div><div class="s" style="font-size:20px; margin-top:10px">captions, cuts, motion, the mix</div></div>
+      <div class="arrow" style="font-size:40px">&rarr;</div>
+      <div class="node" style="padding:32px 24px"><div class="t" style="font-size:27px">It renders the video</div><div class="s" style="font-size:20px; margin-top:10px">identical every time you run it</div></div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:70px; flex:1; min-height:0; margin-top:38px">
+      <div class="anim d2" style="display:flex; flex-direction:column">
+        <div class="eyebrow" style="margin-bottom:12px">Why a series wants this</div>
+        <ul class="chk" style="gap:13px; font-size:24px">
+          <li><span class="tick">&#10003;</span><div>every clip comes off one template, so the look never drifts</div></li>
+          <li><span class="tick">&#10003;</span><div>change one instruction, re-run, and all of them update</div></li>
+          <li><span class="tick">&#10003;</span><div>save a version before each change, roll back in one step</div></li>
+        </ul>
+      </div>
+      <div class="well anim d3" style="justify-content:flex-start">
+        <div class="eyebrow">Reach for it when</div>
+        <p class="lead" style="font-size:25px; color:#46443a; margin-top:18px">You are making a run of shorts that must look like a set, or you want to turn one good edit into a tool the whole team reuses.</p>
+        <div style="flex:1"></div>
+        <div class="note" style="font-size:22px; font-style:italic">This is the path that made the 3am short you saw, and the one we go deep on today.</div>
+      </div>
+    </div>
+  </div>
+  <div class="ft"><span class="foot">The agent writes the code; you never read it. Your job is the brief and the taste.</span><span class="pageno">4</span></div>
+</section>
+
+  <!-- ===== S06 · WHY IT WORKS (perceptual-engineering, plain words) ===== -->
+<section data-label="Why it works">
+  <div class="hd"><span class="kicker">AI Agent Workshop &middot; 03</span><span class="hd-brand">WalktheChat</span></div>
+  <div class="body-area" style="padding-top:30px">
+    <div class="sub plain" style="font-weight:600">Why it works</div>
+    <h2 class="title sm anim" style="margin-top:12px; max-width:1660px">A cut lands when it falls where the eye already expects it, so you time the moves to attention, not taste.</h2>
+    <ol class="olist anim d1" style="margin-top:34px; gap:18px; max-width:1580px">
+      <li><span class="n">1</span><div><b>The eye predicts the beat.</b> Cut on it and the edit feels inevitable; cut a moment off and it feels wrong, even when the viewer cannot say why.</div></li>
+      <li><span class="n">2</span><div><b>Attention follows the vivid word.</b> Drop the b-roll exactly on the noun she says, not before, not after. That timing is the difference the cut is paying for.</div></li>
+      <li><span class="n">3</span><div><b>One word carries each line.</b> Make that word big and let the rest stay quiet. The exaggerated peak is the thing the brain reaches for.</div></li>
+      <li><span class="n">4</span><div><b>Motion is seen before meaning.</b> A word that moves is caught by the eye before it is read, so movement, not size alone, is how you point.</div></li>
+      <li><span class="n">5</span><div><b>Sound is where the feeling lives.</b> Her voice up front with a low bed under it is the emotion, not a finishing touch you add at the end.</div></li>
+    </ol>
+    <div class="band anim d2" style="margin-top:auto">Good editing is not taste you were born with. It is <span style="color:var(--gold)">timing you can learn and direct</span>.</div>
+  </div>
+  <div class="ft"><span class="foot">The same perception research behind a clear interface is behind a good edit: meet the prediction, point with motion, exaggerate the one thing that matters.</span><span class="pageno">5</span></div>
+</section>
+
+  <!-- ===== S07 · THE SEVEN MOVES ===== -->
+<section data-label="The seven moves">
+  <div class="hd"><span class="kicker">AI Agent Workshop &middot; 03</span><span class="hd-brand">WalktheChat</span></div>
+  <div class="body-area" style="padding-top:30px">
+    <div class="sub plain" style="font-weight:600">The recipe</div>
+    <h2 class="title sm anim" style="margin-top:12px; max-width:1660px">Every short is the same seven moves, so you assemble a clip instead of inventing one each time.</h2>
+    <div class="mgrid anim d1">
+      <div class="mv"><span class="mvn">1</span><div><div class="mvt">Cold-open hook</div><div class="mvs">state the point in the first three seconds, before anyone scrolls past</div></div></div>
+      <div class="mv"><span class="mvn">2</span><div><div class="mvt">Kinetic captions</div><div class="mvs">words pop in on the beat, the key word gilded gold</div></div></div>
+      <div class="mv"><span class="mvn">3</span><div><div class="mvt">B-roll on the beat</div><div class="mvs">one cutaway per vivid noun, her voice rolling underneath</div></div></div>
+      <div class="mv"><span class="mvn">4</span><div><div class="mvt">Hero-word slam</div><div class="mvs">one or two a clip, the big word that lands the line</div></div></div>
+      <div class="mv"><span class="mvn">5</span><div><div class="mvt">Reaction cut-in</div><div class="mvs">cut to the other person nodding, so it feels like a real talk</div></div></div>
+      <div class="mv"><span class="mvn">6</span><div><div class="mvt">Lower-third credit</div><div class="mvs">name who is speaking; the host is always credited</div></div></div>
+      <div class="mv"><span class="mvn">7</span><div><div class="mvt">Outro sting</div><div class="mvs">the same closing clip every time, so the series looks like a set</div></div></div>
+    </div>
+    <div class="band anim d2" style="margin-top:14px">Learn the seven once. Every short you make is some <span style="color:var(--gold)">arrangement of them</span>.</div>
+  </div>
+  <div class="ft"><span class="foot">The menu both branches build from, whether you place the moves by hand in Palmier or ask the agent for them in words.</span><span class="pageno">6</span></div>
+</section>
+
+  <!-- ===== S08 · THE METHOD (the loop) ===== -->
+<section data-label="The method">
+  <div class="hd"><span class="kicker">AI Agent Workshop &middot; 03</span><span class="hd-brand">WalktheChat</span></div>
+  <div class="body-area" style="padding-top:30px">
+    <div class="sub plain" style="font-weight:600">The method</div>
+    <h2 class="title sm anim" style="margin-top:12px; max-width:1660px">Brief the mood, gather footage and sound, lay captions on the words, cut b-roll on the nouns, then ship.</h2>
+    <div class="flow anim d1" style="margin-top:46px; align-items:stretch">
+      <div class="node" style="padding:30px 18px"><div class="t" style="font-size:25px">Brief</div><div class="s" style="font-size:18px; margin-top:9px">mood in three words, five beats, on paper</div></div>
+      <div class="arrow">&rarr;</div>
+      <div class="node" style="padding:30px 18px"><div class="t" style="font-size:25px">Gather</div><div class="s" style="font-size:18px; margin-top:9px">your footage and the sound</div></div>
+      <div class="arrow">&rarr;</div>
+      <div class="node accent" style="padding:30px 18px"><div class="t" style="font-size:25px">Assemble</div><div class="s" style="font-size:18px; margin-top:9px">captions on words, b-roll on nouns</div></div>
+      <div class="arrow">&rarr;</div>
+      <div class="node" style="padding:30px 18px"><div class="t" style="font-size:25px">Punch</div><div class="s" style="font-size:18px; margin-top:9px">slam the turn, credit the speaker</div></div>
+      <div class="arrow">&rarr;</div>
+      <div class="node" style="padding:30px 18px"><div class="t" style="font-size:25px">Ship</div><div class="s" style="font-size:18px; margin-top:9px">render, hear her, send it</div></div>
+    </div>
+    <p class="note anim d2" style="margin-top:34px; font-size:24px; max-width:1580px">It is the same loop from workshop two in new clothes: brief on paper, build a rough first version, take a taste pass, then ship. The material changed, the loop did not.</p>
+    <div class="band anim d3" style="margin-top:auto">The brief is the work. <span style="color:var(--gold)">The render is the easy part.</span></div>
+  </div>
+  <div class="ft"><span class="foot">The steps are the same whether you place them by hand in Palmier or direct an agent to build them.</span><span class="pageno">7</span></div>
+</section>
+
+  <!-- ===== S09 · SHIPS TWICE (acupoints clip + real cards) ===== -->
+<section data-label="Ships twice">
+  <div class="hd"><span class="kicker">AI Agent Workshop &middot; 03</span><span class="hd-brand">WalktheChat</span></div>
+  <div class="body-area" style="padding-top:26px">
+    <div class="sub plain" style="font-weight:600">One clip, two deliverables</div>
+    <h2 class="title sm anim" style="margin-top:12px; max-width:1700px">One teaching clip ships twice: a watchable short, and a four-point card someone can actually press.</h2>
+    <div class="shipsgrid">
+      <div class="shipcol anim d1">
+        <div class="shiplabel">The watchable short</div>
+        <div class="phone"><span class="notch"></span><video class="vid" src="assets/acupoints.mp4" poster="assets/acupoints-poster.png" controls playsinline preload="metadata"></video></div>
+      </div>
+      <div class="shipplus anim d2">+</div>
+      <div class="shipcol anim d2">
+        <div class="shiplabel">The reference card people keep</div>
+        <div class="cardpair">
+          <div class="cardframe"><img src="assets/card-wrist.png" alt="Two points on the wrist"></div>
+          <div class="cardframe"><img src="assets/card-head.png" alt="Two points for the head"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ft"><span class="foot">Real cards from the Sleep episode: HT 7 and PC 7 on the wrist, GV 20 and GV 24 on the head. Each saves to a camera roll and drops straight into a DM or a blog post.</span><span class="pageno">8</span></div>
+</section>
+
+  <!-- ===== S10 · SAME HABITS ===== -->
+<section data-label="Same habits">
+  <div class="hd"><span class="kicker">AI Agent Workshop &middot; 03</span><span class="hd-brand">WalktheChat</span></div>
+  <div class="body-area" style="padding-top:30px">
+    <div class="sub plain" style="font-weight:600">Same habits</div>
+    <h2 class="title sm anim" style="margin-top:12px; max-width:1660px">The five habits from workshops one and two still run the show; only the medium changed.</h2>
+    <ul class="chk anim d1" style="margin-top:38px; gap:19px; max-width:1640px; font-size:25px">
+      <li><span class="tick">&#10003;</span><div><b>Context first.</b> Point the agent at your footage, the transcript and a reference clip before you ask for anything.</div></li>
+      <li><span class="tick">&#10003;</span><div><b>Plan before building.</b> Write the beats down first. Re-cutting a plan is cheap; re-rendering a wrong video is slow.</div></li>
+      <li><span class="tick">&#10003;</span><div><b>One job per ask.</b> Captions, then b-roll, then the mix. Small asks land; one giant prompt drifts.</div></li>
+      <li><span class="tick">&#10003;</span><div><b>Review every output.</b> Watch the render. If you cannot hear her clearly, it is not done, however good it looks.</div></li>
+      <li><span class="tick">&#10003;</span><div><b>Commit often.</b> Save a version before "make it weirder," so a bad take costs a minute, not the afternoon.</div></li>
+    </ul>
+    <div class="band anim d2" style="margin-top:auto">New medium, same habits. That is why this is workshop <span style="color:var(--gold)">three</span>, not a fresh start.</div>
+  </div>
+  <div class="ft"><span class="foot">If you sat through workshops one and two, you already know how to do this. Today only swaps the output.</span><span class="pageno">9</span></div>
+</section>
+
+  <!-- ===== S11 · THE EXERCISE (the only commands you type) ===== -->
+<section data-label="The exercise">
+  <div class="hd"><span class="kicker">AI Agent Workshop &middot; 03</span><span class="hd-brand">WalktheChat</span></div>
+  <div class="body-area" style="padding-top:30px">
+    <div class="sub plain" style="font-weight:600">The exercise</div>
+    <h2 class="title sm anim" style="margin-top:12px; max-width:1700px">In the next twenty minutes you render your first clip from a template you barely touch.</h2>
+    <div style="display:grid; grid-template-columns:1.04fr .96fr; gap:60px; flex:1; min-height:0; margin-top:34px">
+      <div class="anim d1" style="display:flex; flex-direction:column; min-height:0">
+        <ol class="olist" style="gap:15px; font-size:24px">
+          <li><span class="n">1</span><div>Pick a template you like from the gallery. Do not start from a blank page.</div></li>
+          <li><span class="n">2</span><div>Tell the agent your one line and hand it one photo. Talk to it, never edit the code.</div></li>
+          <li><span class="n">3</span><div>Ask for two moves: a kinetic caption and one hero word.</div></li>
+          <li><span class="n">4</span><div>Render. Watch it. Ask for one change. Render again.</div></li>
+          <li><span class="n">5</span><div>Send the clip to one real person before you leave.</div></li>
+        </ol>
+        <div class="note" style="margin-top:auto; font-size:22px; font-style:italic">Five seconds is a win. We are training the loop, not making a masterpiece.</div>
+      </div>
+      <div class="anim d2" style="display:flex; flex-direction:column; gap:20px; min-height:0">
+        <div class="term">
+          <div><span class="p">$</span> <span class="c">npx skills add heygen-com/hyperframes</span></div>
+          <div><span class="p">$</span> <span class="c">npx hyperframes init my-first-clip</span></div>
+          <div><span class="o"># pick a template, change the words + one image</span></div>
+          <div><span class="p">$</span> <span class="c">npx hyperframes render</span></div>
+          <div><span class="o"># out.mp4 &rarr; send it to one person</span></div>
+        </div>
+        <div class="well" style="justify-content:flex-start; padding:24px 28px">
+          <div class="eyebrow">Templates to remix</div>
+          <p class="lead" style="font-size:23px; color:#46443a; margin-top:12px">Browse <b>hyperframes.dev/design</b> for ready-made looks. Copy the one closest to your idea, then change only the words and one image.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ft"><span class="foot">These are the only commands you type all day. Everything else is a sentence to the agent.</span><span class="pageno">10</span></div>
+</section>
+
+  <!-- ===== S12 · HABIT CONTRACT ===== -->
+<section data-label="Habit contract">
+  <div class="hd"><span class="kicker">AI Agent Workshop &middot; 03</span><span class="hd-brand">WalktheChat</span></div>
+  <div class="body-area" style="padding-top:30px">
+    <div class="sub plain" style="font-weight:600">Before you leave</div>
+    <h2 class="title sm anim" style="margin-top:12px; max-width:1660px">Name the next clip you will ship, where it goes, and the date, before you leave the room.</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:80px; flex:1; min-height:0; margin-top:40px">
+      <div class="anim d1">
+        <ol class="olist" style="gap:26px">
+          <li><span class="n">1</span><div><b>My next clip is</b> ______ <div style="font-size:22px; color:#5d594c; margin-top:6px">A real one: a client short, an episode cut, a product teaser.</div></div></li>
+          <li><span class="n">2</span><div><b>It ships to</b> ______ <div style="font-size:22px; color:#5d594c; margin-top:6px">A channel with an audience, not a folder on your desktop.</div></div></li>
+          <li><span class="n">3</span><div><b>By</b> ______ <div style="font-size:22px; color:#5d594c; margin-top:6px">A date inside the next two weeks. Say it out loud.</div></div></li>
+        </ol>
+      </div>
+      <div class="well anim d2" style="justify-content:flex-start">
+        <div class="eyebrow">What happens after</div>
+        <p class="lead" style="font-size:26px; color:#46443a; margin-top:20px">Show and tell in two weeks. Bring the clip and the card it produced.</p>
+        <p class="lead" style="font-size:26px; color:#46443a; margin-top:16px">Every short we ship goes on the team gallery. Watching it fill up is the scoreboard.</p>
+        <div style="flex:1"></div>
+        <div class="note" style="font-size:22px; font-style:italic">One rule changes for good: every episode now ships a clip and a card, not just a clip.</div>
+      </div>
+    </div>
+    <div class="band anim d3" style="margin-top:8px">The clip you make today is the bait. <span style="color:var(--gold)">The habit is the product.</span></div>
+  </div>
+  <div class="ft"><span class="foot"></span><span class="pageno">11</span></div>
+</section>
+
+  <!-- ===== S13 · CLOSING ===== -->
+<section class="dark" data-anim="closing" data-label="Watch one render" style="align-items:center; justify-content:center; text-align:center">
+  <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:30px; max-width:1500px">
+    <h2 class="title clo" style="font-size:104px; line-height:1.03; color:var(--cream); max-width:1500px"><span class="w">Enough</span> <span class="w">slides.</span><br><span class="w">Watch</span> <span class="w">one</span> <span class="w" style="color:var(--gold)">render.</span></h2>
+    <div class="lead" style="font-family:var(--serif); font-style:italic; font-size:42px; line-height:1.3; color:rgba(251,248,241,.9); max-width:1180px">One brief, one template, live. You walk out with the first clip already made.</div>
+  </div>
+  <div class="closebar"><i class="cbfill"></i></div>
+  <div class="anim d2" style="position:absolute; left:0; right:0; bottom:var(--pad-bottom); text-align:center; font-size:21px; letter-spacing:.26em; text-transform:uppercase; color:rgba(251,248,241,.5); font-weight:500">WalktheChat &middot; AI Agent Workshop 03 &middot; 2026</div>
+</section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+<script src="vendor/gsap.min.js"></script>
+<script>
+/* Motion layer: play a slide's GSAP timeline when it becomes active.
+   Base CSS state is the visible end-state, so print / reduced-motion / no-JS
+   still show content. Timelines are built lazily on first activation and
+   restarted on every revisit (and via the Replay button). */
+(function(){
+  var deck = document.querySelector('deck-stage');
+  if(!window.gsap || !deck) return;
+  gsap.config({nullTargetWarn:false});
+  var built = new WeakMap();
+
+  function buildCover(s){
+    var tl = gsap.timeline({paused:true});
+    tl.from(s.querySelectorAll('.ctitle .w'), {yPercent:120, opacity:0, duration:.85, ease:'power3.out', stagger:.075});
+    tl.from(s.querySelector('.csub'), {y:20, opacity:0, duration:.6, ease:'power2.out'}, '-=.35');
+    var line = s.querySelector('.playhead'), dot = s.querySelector('.phdot');
+    if(line) tl.fromTo(line, {scaleX:0}, {scaleX:1, duration:1.5, ease:'power1.inOut'}, '-=.45');
+    if(line && dot) tl.fromTo(dot, {x:0}, {x:line.offsetWidth, duration:1.5, ease:'power1.inOut'}, '<');
+    return tl;
+  }
+  function buildProof(s){
+    var tl = gsap.timeline({paused:true});
+    tl.from(s.querySelectorAll('.kine .w'), {opacity:0, y:26, duration:.4, ease:'back.out(2.2)', stagger:.12});
+    tl.fromTo(s.querySelector('.kine .key'), {color:'#ffffff'}, {color:'#f1cfa0', duration:.3}, '-=.45');
+    var slam = s.querySelector('.slam');
+    if(slam){
+      tl.fromTo(slam, {scale:2.3, opacity:0, filter:'blur(16px)'},
+                      {scale:1, opacity:1, filter:'blur(0px)', duration:.5, ease:'power4.out'}, '+=.15');
+      tl.to(slam, {x:'+=10', duration:.04, repeat:7, yoyo:true}, '-=.18');
+      tl.to(slam, {opacity:0, duration:.4, delay:.7});
+    }
+    return tl;
+  }
+  function buildClosing(s){
+    var tl = gsap.timeline({paused:true});
+    tl.from(s.querySelectorAll('.clo .w'), {yPercent:120, opacity:0, duration:.8, ease:'power3.out', stagger:.08});
+    tl.from(s.querySelector('.lead'), {y:18, opacity:0, duration:.5, ease:'power2.out'}, '-=.3');
+    var fill = s.querySelector('.cbfill');
+    if(fill) tl.fromTo(fill, {scaleX:0}, {scaleX:1, duration:1.3, ease:'power1.inOut'}, '-=.15');
+    return tl;
+  }
+  function build(s){
+    var k = s.getAttribute('data-anim');
+    if(k === 'cover') return buildCover(s);
+    if(k === 'proof') return buildProof(s);
+    if(k === 'closing') return buildClosing(s);
+    return null;
+  }
+  function play(s){
+    if(!s || !s.getAttribute('data-anim')) return;
+    var tl = built.get(s);
+    if(!tl){ tl = build(s); if(tl) built.set(s, tl); }
+    if(tl) tl.restart();
+  }
+  deck.addEventListener('slidechange', function(e){ play(e.detail.slide); });
+  deck.addEventListener('click', function(e){
+    var b = e.target.closest && e.target.closest('.replay');
+    if(!b) return;
+    e.stopPropagation();
+    var s = b.closest('section');
+    var tl = built.get(s) || build(s);
+    if(tl){ built.set(s, tl); tl.restart(); }
+  }, true);
+  // Fire the entrance for whichever slide is active on load: the init
+  // slidechange can dispatch before this listener attaches.
+  requestAnimationFrame(function(){
+    var a = deck.querySelector('[data-deck-active]');
+    if(a) play(a);
+  });
+})();
+</script>
+</body>
+</html>

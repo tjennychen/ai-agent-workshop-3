@@ -83,6 +83,24 @@
 .clo .w{display:inline-block}
 .closebar{position:absolute; left:50%; transform:translateX(-50%); bottom:188px; width:520px; height:4px; border-radius:3px; background:rgba(251,248,241,.16); overflow:hidden}
 .closebar .cbfill{display:block; height:100%; width:100%; background:linear-gradient(90deg,var(--gold),#e3c489); transform:scaleX(0); transform-origin:left center}
+/* slide: Murch Rule of Six split bar (who owns the cut) */
+.r6{display:flex; width:100%; max-width:1640px; height:120px; border-radius:12px; overflow:hidden; box-shadow:0 14px 36px rgba(27,26,23,.14)}
+.r6 .seg{display:flex; flex-direction:column; align-items:center; justify-content:center; color:#FBF8F1; min-width:0; border-right:2px solid var(--cream); font-family:var(--serif)}
+.r6 .seg:last-child{border-right:0}
+.r6 .seg .pc{font-size:36px; font-weight:600; line-height:1}
+.r6 .seg .lb{font-family:var(--sans); font-size:12px; letter-spacing:.05em; text-transform:uppercase; margin-top:7px; opacity:.95; white-space:nowrap}
+.r6 .you{background:var(--gold)}
+.r6 .you2{background:#cda04e}
+.r6 .ai{background:var(--stone)}
+.r6key{display:grid; grid-template-columns:1fr 1fr; gap:30px; margin-top:26px; font-size:23px; color:#46443a; max-width:1640px; line-height:1.4}
+.r6key b{font-family:var(--sans); font-weight:700}
+/* receipts: research-paper rows with real links */
+.paper{border-left:4px solid var(--gold); padding:3px 0 3px 22px}
+.paper .ptitle{font-family:var(--serif); font-size:31px; color:var(--ink); line-height:1.18}
+.paper .pmeta{font-family:var(--sans); font-size:18px; color:var(--stone); letter-spacing:.02em; font-weight:600}
+.paper .psum{font-size:21px; color:#46443a; margin-top:7px; max-width:1580px; line-height:1.4}
+.paper .plink{display:inline-block; margin-top:8px; font-family:var(--mono); font-size:17px; color:var(--gold); text-decoration:none; border-bottom:1px solid rgba(184,137,59,.45)}
+.paper .plink:hover{border-bottom-color:var(--gold)}
 </style>
 </head>
 <body>
@@ -251,17 +269,78 @@
   <div class="hd"><span class="kicker">AI Agent Workshop &middot; 03</span><span class="hd-brand">WalktheChat</span></div>
   <div class="body-area" style="padding-top:30px">
     <div class="sub plain" style="font-weight:600">Why it works</div>
-    <h2 class="title sm anim" style="margin-top:12px; max-width:1660px">A cut lands when it falls where the eye already expects it, so you time the moves to attention, not taste.</h2>
-    <ol class="olist anim d1" style="margin-top:34px; gap:18px; max-width:1580px">
-      <li><span class="n">1</span><div><b>The eye predicts the beat.</b> Cut on it and the edit feels inevitable; cut a moment off and it feels wrong, even when the viewer cannot say why.</div></li>
-      <li><span class="n">2</span><div><b>Attention follows the vivid word.</b> Drop the b-roll exactly on the noun she says, not before, not after. That timing is the difference the cut is paying for.</div></li>
-      <li><span class="n">3</span><div><b>One word carries each line.</b> Make that word big and let the rest stay quiet. The exaggerated peak is the thing the brain reaches for.</div></li>
-      <li><span class="n">4</span><div><b>Motion is seen before meaning.</b> A word that moves is caught by the eye before it is read, so movement, not size alone, is how you point.</div></li>
-      <li><span class="n">5</span><div><b>Sound is where the feeling lives.</b> Her voice up front with a low bed under it is the emotion, not a finishing touch you add at the end.</div></li>
-    </ol>
-    <div class="band anim d2" style="margin-top:auto">Good editing is not taste you were born with. It is <span style="color:var(--gold)">timing you can learn and direct</span>.</div>
+    <h2 class="title sm anim" style="margin-top:12px; max-width:1720px">Every cut answers six questions. A machine can now handle four of them. The two that decide the film, <span style="color:var(--gold)">emotion and story</span>, are 74 percent, and they stay yours.</h2>
+    <div class="anim d1" style="margin-top:40px">
+      <div class="r6">
+        <div class="seg you" style="flex:51"><span class="pc">51</span><span class="lb">Emotion</span></div>
+        <div class="seg you2" style="flex:23"><span class="pc">23</span><span class="lb">Story</span></div>
+        <div class="seg ai" style="flex:10"><span class="pc">10</span><span class="lb">Rhythm</span></div>
+        <div class="seg ai" style="flex:7"><span class="pc">7</span><span class="lb">Eye</span></div>
+        <div class="seg ai" style="flex:5"><span class="pc">5</span><span class="lb">Plane</span></div>
+        <div class="seg ai" style="flex:4"><span class="pc">4</span><span class="lb">Space</span></div>
+      </div>
+      <div class="r6key">
+        <div><b style="color:var(--gold)">Yours, 74 percent.</b> Emotion and story: the blink, the moment the idea lands and the story turns. No model finds that for you.</div>
+        <div><b>Directable, 26 percent.</b> Rhythm, where the eye already is, screen continuity. The machine can place these, and now even guess the cut point.</div>
+      </div>
+    </div>
+    <div class="band anim d2" style="margin-top:auto">Editing is not taste you were born with. The mechanics are <span style="color:var(--gold)">learnable and directable</span>; the feeling is the one call that stays yours.</div>
   </div>
-  <div class="ft"><span class="foot">The same perception research behind a clear interface is behind a good edit: meet the prediction, point with motion, exaggerate the one thing that matters.</span><span class="pageno">5</span></div>
+  <div class="ft"><span class="foot">Walter Murch, In the Blink of an Eye, the Rule of Six. The weights a cut must honor: emotion 51, story 23, rhythm 10, eye-trace 7, plane 5, spatial 4. Sources on the next two slides.</span><span class="pageno">5</span></div>
+</section>
+
+  <!-- ===== S06b · THE RECEIPTS, FOUNDATIONS ===== -->
+<section data-label="The research">
+  <div class="hd"><span class="kicker">AI Agent Workshop &middot; 03</span><span class="hd-brand">WalktheChat</span></div>
+  <div class="body-area" style="padding-top:30px">
+    <div class="sub plain" style="font-weight:600">The receipts &middot; foundations</div>
+    <h2 class="title sm anim" style="margin-top:12px; max-width:1720px">None of this is invented. The method sits on decades of editing research you can go read.</h2>
+    <div class="anim d1" style="margin-top:34px; display:flex; flex-direction:column; gap:26px">
+      <div class="paper">
+        <div class="ptitle">In the Blink of an Eye <span class="pmeta">&middot; Walter Murch &middot; 1995, 2nd ed. 2001 &middot; book</span></div>
+        <div class="psum">The Rule of Six and the blink. A cut is felt emotional punctuation; emotion is 51 percent of the call, story 23. This is the human theory of the cut.</div>
+        <a class="plink" href="https://en.wikipedia.org/wiki/In_the_Blink_of_an_Eye_(book)" target="_blank" rel="noopener">en.wikipedia.org/wiki/In_the_Blink_of_an_Eye_(book)</a>
+      </div>
+      <div class="paper">
+        <div class="ptitle">Computational Video Editing for Dialogue-Driven Scenes <span class="pmeta">&middot; Leake, Davis, Truong, Agrawala &middot; SIGGRAPH 2017</span></div>
+        <div class="psum">A machine selects the right take per line and assembles a full edit in seconds, from named editing rules. This is what the AI in the editor actually does: it picks and arranges.</div>
+        <a class="plink" href="https://graphics.stanford.edu/papers/roughcut/" target="_blank" rel="noopener">graphics.stanford.edu/papers/roughcut</a>
+      </div>
+      <div class="paper">
+        <div class="ptitle">Learning to Cut by Watching Movies <span class="pmeta">&middot; Pardo, Caba, Le&oacute;n Alc&aacute;zar, Thabet, Ghanem &middot; ICCV 2021</span></div>
+        <div class="psum">Trained on 255,000 real cuts, a model learns to rank where a cut is plausible from the audio and picture. It proposes the cut point; it does not decide the film.</div>
+        <a class="plink" href="https://arxiv.org/abs/2108.04294" target="_blank" rel="noopener">arxiv.org/abs/2108.04294</a>
+      </div>
+    </div>
+  </div>
+  <div class="ft"><span class="foot">The bottom of Murch's list, and the assembly, is what these systems automate. The top, emotion and story, is what they concede they cannot.</span><span class="pageno">6</span></div>
+</section>
+
+  <!-- ===== S06c · THE RECEIPTS, 2026 FRONTIER ===== -->
+<section data-label="The frontier">
+  <div class="hd"><span class="kicker">AI Agent Workshop &middot; 03</span><span class="hd-brand">WalktheChat</span></div>
+  <div class="body-area" style="padding-top:30px">
+    <div class="sub plain" style="font-weight:600">The receipts &middot; the 2026 frontier</div>
+    <h2 class="title sm anim" style="margin-top:12px; max-width:1720px">The machines are closing on the mechanics fast, and still miss the cut that carries the feeling.</h2>
+    <div class="anim d1" style="margin-top:34px; display:flex; flex-direction:column; gap:26px">
+      <div class="paper">
+        <div class="ptitle">From Long Videos to Engaging Clips (HIVE) <span class="pmeta">&middot; Wang et al. &middot; EMNLP 2025</span></div>
+        <div class="psum">Turns a long talk into short clips by splitting the job into three: find the highlight, pick the open and close, prune the rest. The clean blueprint for long to short.</div>
+        <a class="plink" href="https://arxiv.org/abs/2507.02790" target="_blank" rel="noopener">arxiv.org/abs/2507.02790</a>
+      </div>
+      <div class="paper">
+        <div class="ptitle">CutClaw: Agentic Hours-Long Video Editing via Music Synchronization <span class="pmeta">&middot; Zhao et al. &middot; arXiv, March 2026</span></div>
+        <div class="psum">Three agents: plan to the music, ground each shot on the beat, then review for overlap. Condenses hours of footage into a beat-synced cut. The newest shape of the agent editor.</div>
+        <a class="plink" href="https://arxiv.org/abs/2603.29664" target="_blank" rel="noopener">arxiv.org/abs/2603.29664</a>
+      </div>
+      <div class="paper">
+        <div class="ptitle">VEU-Bench: Towards Comprehensive Understanding of Video Editing <span class="pmeta">&middot; Li et al. &middot; CVPR 2025</span></div>
+        <div class="psum">The skeptic's receipt. Test 11 top video models on recognizing cuts and transitions and they struggle, some below random. They pattern-match; they do not yet understand the edit.</div>
+        <a class="plink" href="https://arxiv.org/abs/2504.17828" target="_blank" rel="noopener">arxiv.org/abs/2504.17828</a>
+      </div>
+    </div>
+  </div>
+  <div class="ft"><span class="foot">Two are peer reviewed, EMNLP and CVPR; CutClaw is a March 2026 preprint, strong but a single study. The frontier moves monthly.</span><span class="pageno">7</span></div>
 </section>
 
   <!-- ===== S07 · THE SEVEN MOVES ===== -->
@@ -281,7 +360,7 @@
     </div>
     <div class="band anim d2" style="margin-top:14px">Learn the seven once. Every short you make is some <span style="color:var(--gold)">arrangement of them</span>.</div>
   </div>
-  <div class="ft"><span class="foot">The menu both branches build from, whether you place the moves by hand in Palmier or ask the agent for them in words.</span><span class="pageno">6</span></div>
+  <div class="ft"><span class="foot">The menu both branches build from, whether you place the moves by hand in Palmier or ask the agent for them in words.</span><span class="pageno">8</span></div>
 </section>
 
   <!-- ===== S08 · THE METHOD (the loop) ===== -->
@@ -304,7 +383,7 @@
     <p class="note anim d2" style="margin-top:34px; font-size:24px; max-width:1580px">It is the same loop from workshop two in new clothes: brief on paper, build a rough first version, take a taste pass, then ship. The material changed, the loop did not.</p>
     <div class="band anim d3" style="margin-top:auto">The brief is the work. <span style="color:var(--gold)">The render is the easy part.</span></div>
   </div>
-  <div class="ft"><span class="foot">The steps are the same whether you place them by hand in Palmier or direct an agent to build them.</span><span class="pageno">7</span></div>
+  <div class="ft"><span class="foot">The steps are the same whether you place them by hand in Palmier or direct an agent to build them.</span><span class="pageno">9</span></div>
 </section>
 
   <!-- ===== S09 · SHIPS TWICE (acupoints clip + real cards) ===== -->
@@ -328,7 +407,7 @@
       </div>
     </div>
   </div>
-  <div class="ft"><span class="foot">Real cards from the Sleep episode: HT 7 and PC 7 on the wrist, GV 20 and GV 24 on the head. Each saves to a camera roll and drops straight into a DM or a blog post.</span><span class="pageno">8</span></div>
+  <div class="ft"><span class="foot">Real cards from the Sleep episode: HT 7 and PC 7 on the wrist, GV 20 and GV 24 on the head. Each saves to a camera roll and drops straight into a DM or a blog post.</span><span class="pageno">10</span></div>
 </section>
 
   <!-- ===== S10 · SAME HABITS ===== -->
@@ -346,7 +425,7 @@
     </ul>
     <div class="band anim d2" style="margin-top:auto">New medium, same habits. That is why this is workshop <span style="color:var(--gold)">three</span>, not a fresh start.</div>
   </div>
-  <div class="ft"><span class="foot">If you sat through workshops one and two, you already know how to do this. Today only swaps the output.</span><span class="pageno">9</span></div>
+  <div class="ft"><span class="foot">If you sat through workshops one and two, you already know how to do this. Today only swaps the output.</span><span class="pageno">11</span></div>
 </section>
 
   <!-- ===== S11 · THE EXERCISE (the only commands you type) ===== -->
@@ -381,7 +460,7 @@
       </div>
     </div>
   </div>
-  <div class="ft"><span class="foot">These are the only commands you type all day. Everything else is a sentence to the agent.</span><span class="pageno">10</span></div>
+  <div class="ft"><span class="foot">These are the only commands you type all day. Everything else is a sentence to the agent.</span><span class="pageno">12</span></div>
 </section>
 
   <!-- ===== S12 · HABIT CONTRACT ===== -->
@@ -408,7 +487,7 @@
     </div>
     <div class="band anim d3" style="margin-top:8px">The clip you make today is the bait. <span style="color:var(--gold)">The habit is the product.</span></div>
   </div>
-  <div class="ft"><span class="foot"></span><span class="pageno">11</span></div>
+  <div class="ft"><span class="foot"></span><span class="pageno">13</span></div>
 </section>
 
   <!-- ===== S13 · CLOSING ===== -->

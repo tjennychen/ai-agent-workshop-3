@@ -433,34 +433,37 @@
   <div class="hd"><span class="kicker">AI Agent Workshop &middot; 03</span><span class="hd-brand">WalktheChat</span></div>
   <div class="body-area" style="padding-top:30px">
     <div class="sub plain" style="font-weight:600">The exercise</div>
-    <h2 class="title sm anim" style="margin-top:12px; max-width:1700px">In the next twenty minutes you render your first clip from a template you barely touch.</h2>
-    <div style="display:grid; grid-template-columns:1.04fr .96fr; gap:60px; flex:1; min-height:0; margin-top:34px">
-      <div class="anim d1" style="display:flex; flex-direction:column; min-height:0">
-        <ol class="olist" style="gap:15px; font-size:24px">
-          <li><span class="n">1</span><div>Pick a template you like from the gallery. Do not start from a blank page.</div></li>
-          <li><span class="n">2</span><div>Tell the agent your one line and hand it one photo. Talk to it, never edit the code.</div></li>
-          <li><span class="n">3</span><div>Ask for two moves: a kinetic caption and one hero word.</div></li>
-          <li><span class="n">4</span><div>Render. Watch it. Ask for one change. Render again.</div></li>
-          <li><span class="n">5</span><div>Send the clip to one real person before you leave.</div></li>
-        </ol>
-        <div class="note" style="margin-top:auto; font-size:22px; font-style:italic">Five seconds is a win. We are training the loop, not making a masterpiece.</div>
-      </div>
-      <div class="anim d2" style="display:flex; flex-direction:column; gap:20px; min-height:0">
-        <div class="term">
+    <h2 class="title sm anim" style="margin-top:12px; max-width:1720px">In the next twenty minutes, ship one clip. Pick the path that fits your hands.</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:54px; flex:1; min-height:0; margin-top:30px">
+      <div class="anim d1" style="display:flex; flex-direction:column; gap:16px; min-height:0">
+        <div>
+          <div class="eyebrow">Task 1 &middot; the agent writes the code</div>
+          <div class="note" style="font-size:20px; margin-top:5px">HyperFrames, for when you are happy in a command line.</div>
+        </div>
+        <div class="term" style="font-size:20px">
           <div><span class="p">$</span> <span class="c">npx skills add heygen-com/hyperframes</span></div>
           <div><span class="p">$</span> <span class="c">npx hyperframes init my-first-clip</span></div>
           <div><span class="o"># pick a template, change the words + one image</span></div>
           <div><span class="p">$</span> <span class="c">npx hyperframes render</span></div>
-          <div><span class="o"># out.mp4 &rarr; send it to one person</span></div>
         </div>
-        <div class="well" style="justify-content:flex-start; padding:24px 28px">
-          <div class="eyebrow">Templates to remix</div>
-          <p class="lead" style="font-size:23px; color:#46443a; margin-top:12px">Browse <b>hyperframes.dev/design</b> for ready-made looks. Copy the one closest to your idea, then change only the words and one image.</p>
+        <div class="note" style="font-size:20px">Copy the closest look from <b>hyperframes.dev/design</b>, then ask for two moves: a kinetic caption and one hero word.</div>
+      </div>
+      <div class="anim d2" style="display:flex; flex-direction:column; gap:16px; min-height:0">
+        <div>
+          <div class="eyebrow">Task 2 &middot; you direct the editor</div>
+          <div class="note" style="font-size:20px; margin-top:5px">PalmierPro, for when you want to watch it happen on a timeline.</div>
         </div>
+        <div class="term" style="font-size:20px">
+          <div><span class="o"># open PalmierPro, drop in your clip</span></div>
+          <div><span class="o"># then one line to the agent &darr;</span></div>
+          <div style="margin-top:10px"><span class="c">cut this to a 30 second short, captions on the beat, b-roll on the nouns, keep her voice up</span></div>
+        </div>
+        <div class="note" style="font-size:20px">No code, no menus to hunt. One instruction, it builds the timeline, then you nudge one thing.</div>
       </div>
     </div>
+    <div class="band anim d3" style="margin-top:6px">Either path: five seconds is a win, and <span style="color:var(--gold)">send it to one real person</span> before you leave.</div>
   </div>
-  <div class="ft"><span class="foot">These are the only commands you type all day. Everything else is a sentence to the agent.</span><span class="pageno">12</span></div>
+  <div class="ft"><span class="foot">Two ways in: type four commands, or type one sentence to the editor. Everything past that is a conversation with the agent.</span><span class="pageno">12</span></div>
 </section>
 
   <!-- ===== S12 · HABIT CONTRACT ===== -->
